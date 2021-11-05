@@ -59,3 +59,4 @@ res = translater(order)
 with open('scraper.py', 'w') as f:
     f.write(res)
 # import scraper
+import seleniumUtils
