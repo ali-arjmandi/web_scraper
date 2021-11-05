@@ -1,0 +1,17 @@
+open: my url
+loop:
+    click:
+        type: id
+        value: myId
+        then:
+            print: ali
+    print: test
+    click:
+        type: id
+        value: myId
+    loop:
+        click:
+            type: id
+            value: myId
+            then:
+                print: ok lets go
