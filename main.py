@@ -42,12 +42,11 @@ def translater(order):
                     elif list(i.keys())[0] == "then": d['then'] = list(i.values())[0]
                 code += f"print('clicking on {d['value']} in {d['type']} sections...')\n"
                 if d['then']:
-                    print(d['then'])
                     code += translater(d['then'])
 
     return code
 
-with open('order.txt') as f:
+with open('order.arj') as f:
     order = f.read()
 
 
@@ -57,6 +56,6 @@ res = ""
 
 order = orderParser(order)
 res = translater(order)
-with open('res.py', 'w') as f:
+with open('scraper.py', 'w') as f:
     f.write(res)
-# import res
+# import scraper
