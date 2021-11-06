@@ -3,3 +3,6 @@ venv
 **__pycache__**
 scraper.py
 seleniumUtils/drivers/*
+test.py
+test.arj
+output.txt
