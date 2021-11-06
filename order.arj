@@ -1,17 +1,34 @@
-open: my url
+open: https://www.motorpalacecanada.ca/used-cars
 loop:
-    click:
-        type: id
-        value: myId
+    loopOver:
+        over: //*[@id="main"]/div/div[2]/div/div/div
+        type: class_eq
+        value: vehicle search-result-item vehicleList
+        hasNewObject: true
         then:
-            print: ali
-    print: test
+            clickNewTab:
+                type: class_eq
+                value: btn btn-inventory-details btn-default btn-block
+                then:
+                    loopOver:
+                        over: /html/body/div[3]/div/div[2]/div/div[1]/div[2]/div/div/div[2]/div[1]
+                        type: class_includes
+                        value: col-sm-6 col-md-12
+                        then:
+                            addToObject:
+                                key:
+                                    path: .//div/span[1]
+                                    slice: [:-1]
+                                val:
+                                    path: .//div/span[2]
+                    addToObject:
+                        key: imgs
+                        val:
+                            array: true
+                            path: //*[@id="slider"]/div/ul
+                            type: tag
+                            value: img
+                            attribute: src
     click:
-        type: id
-        value: myId
-    loop:
-        click:
-            type: id
-            value: myId
-            then:
-                print: ok lets go
+        type: class_eq
+        value: next page-numbers
