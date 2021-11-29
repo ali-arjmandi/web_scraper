@@ -1,12 +1,12 @@
 import seleniumUtils
 from selenium.webdriver.common.keys import Keys
-import time, json, os
+import json, os
 driver = seleniumUtils.init_drive()
 objs = []
 extra_comma = True
 def append2file(data, arj_name):
     global extra_comma
-    with open(arj_name+'.json', 'r+b') as f:
+    with open('outputs/'+arj_name+'.json', 'r+b') as f:
         string_data = json.dumps(data)
         string_data = ',\n'+string_data
         if extra_comma:

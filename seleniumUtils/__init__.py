@@ -8,12 +8,13 @@ from selenium.webdriver.chrome.options import Options
 
 
 
-def init_drive(headless=None):
+def init_drive(headless=os.getenv('HEADLESS')=="1"):
     current_directory_path = pathlib.Path(__file__).parent.absolute()
     chrome_driver_path = os.path.join(
         current_directory_path, "./drivers/"+os.getenv("DRIVER"))
     options = Options()
     prefs = {"profile.managed_default_content_settings.images": 2}
+
     options.add_experimental_option("prefs", prefs)
     if headless:
         options.add_argument("--headless")

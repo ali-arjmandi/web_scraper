@@ -1,11 +1,9 @@
 import os
-import argparse
-
-parser = argparse.ArgumentParser(description='Generate Web Scrapers.')
-parser.add_argument('--input', type=str, help='name of arj file')
-args = parser.parse_args()
-args = vars(args)
-
+import sys
+if len(sys.argv) < 1:
+    print("File name not found")
+    exit()
+arj_file = sys.argv[1]
 def arjParser(order):
     lines = order.split("\n")
     arr = []
@@ -33,7 +31,7 @@ def translater(order, variable="driver"):
     for itm in order:
         for k, v in itm.items():
             if k == "open":
-                code += f"with open('{args['input']}.json', 'w') as f:\n\tf.write('[ ]')\nbase_url = '{v}'\ndriver.get(base_url)\n"
+                code += f"with open('outputs/{arj_file}.json', 'w') as f:\n\tf.write('[ ]')\nbase_url = '{v}'\ndriver.get(base_url)\n"
             elif k == "print":
                 d = {
                     "attribute": None,
@@ -71,7 +69,7 @@ def translater(order, variable="driver"):
                     code += "\n".join(list(map(lambda line: "\t"+line, translater(d['then'], 'element').split('\n'))))
                     if d['hasNewObject']:
                         code += "objs.append(obj)\n"
-                        code += "\tappend2file(obj, '"+args['input']+"')\n"
+                        code += "\tappend2file(obj, '"+arj_file+"')\n"
                 else: code += "\tpass\n"
             elif k == "click":
                 d = {
@@ -124,7 +122,7 @@ def translater(order, variable="driver"):
                         if list(i.keys())[0] == "slice": d['slice'] = list(i.values())[0]
                         if list(i.keys())[0] == "path": d['path'] = list(i.values())[0]
                     if not d['attribute']: code += f"key = seleniumUtils.find_by_xpath({variable}, '{d['path']}').text\n"
-                    else: code += f"key = seleniumUtils.find_by_xpath({variable}, '{d['path']}').get_attribute('{d['attribute']}')\n"
+                    else: code += f"try:\n\tkey = seleniumUtils.find_by_xpath({variable}, '{d['path']}').get_attribute('{d['attribute']}')\nexcept:pass\n"
                     if d['slice']: code += f"key = key{d['slice']}\n"
                 except:
                     code += f"key = '{v}'\n"
@@ -146,8 +144,8 @@ def translater(order, variable="driver"):
                         if list(i.keys())[0] == "value": d['value'] = list(i.values())[0]
                         if list(i.keys())[0] == "type": d['type'] = list(i.values())[0]
                     if not d['array']:
-                        if not d['attribute']: code += f"val = seleniumUtils.find_by_xpath({variable}, '{d['path']}').text\n"
-                        elif d['attribute'] and d['path']: code += f"val = seleniumUtils.find_by_xpath({variable}, '{d['path']}').get_attribute('{d['attribute']}')\n"
+                        if not d['attribute']: code += f"try:\n\tval = seleniumUtils.find_by_xpath({variable}, '{d['path']}').text\nexcept: pass\n"
+                        elif d['attribute'] and d['path']: code += f"try:\n\tval = seleniumUtils.find_by_xpath({variable}, '{d['path']}').get_attribute('{d['attribute']}')\nexcept: pass\n"
                         if d['slice']: code += f"val = val{d['slice']}\n"
                     else:
                         code += "val = []\n"
@@ -166,8 +164,9 @@ def translater(order, variable="driver"):
 
 
 os.makedirs('./arjs', exist_ok=True)
+os.makedirs('./outputs', exist_ok=True)
 try:
-    with open('./arjs/'+args['input']+'.arj') as f:
+    with open('./arjs/'+arj_file+'.arj') as f:
         order = f.read()
 except FileNotFoundError:
     print("File not found")
