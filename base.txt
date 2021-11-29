@@ -1,7 +1,19 @@
 import seleniumUtils
 from selenium.webdriver.common.keys import Keys
-import time, json
+import time, json, os
 driver = seleniumUtils.init_drive()
 objs = []
+extra_comma = True
+def append2file(data, arj_name):
+    global extra_comma
+    with open(arj_name+'.json', 'r+b') as f:
+        string_data = json.dumps(data)
+        string_data = ',\n'+string_data
+        if extra_comma:
+            string_data = string_data[1:]
+            extra_comma = False
+        f.seek(-2, os.SEEK_END)
+        f.write(string_data.encode())
+        f.write("\n]".encode())
 @@code@@
 driver.quit()

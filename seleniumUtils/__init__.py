@@ -1,7 +1,8 @@
 import pathlib
 import os
 import threading, time
-
+from dotenv import load_dotenv
+load_dotenv()
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
@@ -10,7 +11,7 @@ from selenium.webdriver.chrome.options import Options
 def init_drive(headless=None):
     current_directory_path = pathlib.Path(__file__).parent.absolute()
     chrome_driver_path = os.path.join(
-        current_directory_path, "./drivers/win95")
+        current_directory_path, "./drivers/"+os.getenv("DRIVER"))
     options = Options()
     prefs = {"profile.managed_default_content_settings.images": 2}
     options.add_experimental_option("prefs", prefs)

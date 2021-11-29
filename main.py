@@ -1,4 +1,12 @@
-def orderParser(order):
+import os
+import argparse
+
+parser = argparse.ArgumentParser(description='Generate Web Scrapers.')
+parser.add_argument('--input', type=str, help='name of arj file')
+args = parser.parse_args()
+args = vars(args)
+
+def arjParser(order):
     lines = order.split("\n")
     arr = []
     for line in lines:
@@ -14,9 +22,9 @@ def orderParser(order):
         key = arr[i].split(":")[0]
         value = ":".join(arr[i].split(":")[1:])[1:]
         if '\n' in value:
-            value = orderParser("\n".join(list(map(lambda line: line[4:],value.split("\n")))))
+            value = arjParser("\n".join(list(map(lambda line: line[4:],value.split("\n")))))
         elif value[0] == ' ':
-            value = orderParser(value[4:])
+            value = arjParser(value[4:])
         arr[i] = {key: value}
     return arr
 
@@ -25,7 +33,7 @@ def translater(order, variable="driver"):
     for itm in order:
         for k, v in itm.items():
             if k == "open":
-                code += f"base_url = '{v}'\ndriver.get(base_url)\n"
+                code += f"with open('{args['input']}.json', 'w') as f:\n\tf.write('[ ]')\nbase_url = '{v}'\ndriver.get(base_url)\n"
             elif k == "print":
                 d = {
                     "attribute": None,
@@ -63,7 +71,7 @@ def translater(order, variable="driver"):
                     code += "\n".join(list(map(lambda line: "\t"+line, translater(d['then'], 'element').split('\n'))))
                     if d['hasNewObject']:
                         code += "objs.append(obj)\n"
-                        code += "\tprint(obj)\n"
+                        code += "\tappend2file(obj, '"+args['input']+"')\n"
                 else: code += "\tpass\n"
             elif k == "click":
                 d = {
@@ -156,17 +164,20 @@ def translater(order, variable="driver"):
                 
     return code
 
-with open('order.arj') as f:
-    order = f.read()
+
+os.makedirs('./arjs', exist_ok=True)
+try:
+    with open('./arjs/'+args['input']+'.arj') as f:
+        order = f.read()
+except FileNotFoundError:
+    print("File not found")
+    exit()
 with open('base.txt') as f:
     base = f.read()
 
-
-
-space = 0
 res = ""
 
-order = orderParser(order)
+order = arjParser(order)
 res = translater(order)
 output = base.replace("@@code@@", res)
 
