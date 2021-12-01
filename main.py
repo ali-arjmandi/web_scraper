@@ -3,7 +3,9 @@ import sys
 if len(sys.argv) < 1:
     print("File name not found")
     exit()
+    
 arj_file = sys.argv[1]
+
 def arjParser(order):
     lines = order.split("\n")
     arr = []
@@ -149,14 +151,14 @@ def translater(order, variable="driver"):
                         if d['slice']: code += f"val = val{d['slice']}\n"
                     else:
                         code += "val = []\n"
-                        code += f"element = seleniumUtils.find_by_xpath({variable}, '{d['path']}')\n"
-                        code += "if not element: break\n"
-                        code += f"elements = seleniumUtils.find_by_{d['type']}(element, '{d['value']}', multi=True)\n"
-                        code += "if not elements: break\n"
-                        code += "for element in elements:\n"
-                        if not d['attribute']: code += f"\ttmpVal = element.text\n"
-                        elif d['attribute']: code += f"\ttmpVal = element.get_attribute('{d['attribute']}')\n"
-                        code += "\tval.append(tmpVal)\n"
+                        code += "try:\n"
+                        code += f"\telement = seleniumUtils.find_by_xpath({variable}, '{d['path']}')\n"
+                        code += f"\telements = seleniumUtils.find_by_{d['type']}(element, '{d['value']}', multi=True)\n"
+                        code += "\tfor element in elements:\n"
+                        if not d['attribute']: code += f"\t\ttmpVal = element.text\n"
+                        elif d['attribute']: code += f"\t\ttmpVal = element.get_attribute('{d['attribute']}')\n"
+                        code += "\t\tval.append(tmpVal)\n"
+                        code += "except: pass\n"
                 except:
                     code += f"val = '{v}'\n"
                 
