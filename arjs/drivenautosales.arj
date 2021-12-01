@@ -1,4 +1,4 @@
-open: https://www.motorpalacecanada.ca/used-cars
+open: https://www.drivenautosales.ca/used-cars
 loop:
     loopOver:
         over: //*[@id="main"]/div/div[2]/div/div/div
@@ -22,18 +22,18 @@ loop:
                                 val:
                                     path: .//div/span[2]
                     addToObject:
+                        key: price
+                        val:
+                            path: /html/body/div[3]/div/div[2]/div/div[1]/div[1]/div/div/div[2]/div/span[1]
+                            type: tag
+                            value: span
+                            slice: [1:]
+                    addToObject:
                         key: sold_status
                         val:
                             path: /html/body/div[3]/div/div[1]/div[2]/h3
                             type: tag
                             value: h3
-                    addToObject:
-                        key: vin_number
-                        val:
-                            path: /html/body/div[3]/div/div[2]/div/div[1]/div[1]/div/div/div[2]/div/span[1]/span
-                            type: tag
-                            value: span
-                            attribute: data-cg-vin
                     addToObject:
                         key: imgs
                         val:
